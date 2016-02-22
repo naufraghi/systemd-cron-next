@@ -255,6 +255,10 @@ fn main() {
             writeln!(stderr, "{} is not a directory!", USERS_CRONTAB_DIR).unwrap();
             exit(1);
         },
+        Ok(ref meta) if meta.permissions().readonly() => {
+            writeln!(stderr, "{} should be user writable (suid-root, or sgid)!", USERS_CRONTAB_DIR).unwrap();
+            exit(1);
+        },
         Err(_) => if let Err(_) = fs::create_dir_all(USERS_CRONTAB_DIR) {
             writeln!(stderr, "{} doesn't exist!", USERS_CRONTAB_DIR).unwrap();
             exit(1);
